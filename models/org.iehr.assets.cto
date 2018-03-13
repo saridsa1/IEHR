@@ -1,0 +1,27 @@
+/**
+ * New model file
+ */
+
+namespace org.iehr.assets
+
+import org.iehr.participants.*
+
+asset HealthRecord identified by healthRecordID {
+  o String healthRecordID
+  o Boolean isVisibleToTP default=false
+  --> Prescriber doctor
+  --> Patient    assignedTo
+  o Visit[] visits optional
+}
+
+concept Visit {
+  o DateTime visitDate  
+  o String procedure optional 
+  o Address location optional 
+  o Medication[] medicinePrescribed optional
+}
+
+concept Medication {
+  o String medicationName
+  o String dosage
+}

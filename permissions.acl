@@ -1,0 +1,94 @@
+rule R4 {
+    description: "Allow the prescriber to create the health record"
+    participant: "org.iehr.participants.Prescriber"
+    operation: CREATE
+    resource: "org.iehr.assets.HealthRecord"
+    action: ALLOW
+}
+
+rule PrescriberAccess {
+    description: "Allow the prescriber access to update and read his own info"
+    participant(P): "org.iehr.participants.Prescriber"
+    operation: CREATE, UPDATE, READ
+    resource(R): "org.iehr.participants.Prescriber"
+    condition: (P.getIdentifier() == R.getIdentifier())
+    action: ALLOW    
+}
+
+rule PrescriberUpdateHealthRecord {
+    description: "Allow the prescriber access to update and read his own info"
+    participant: "org.iehr.participants.Prescriber"
+    operation: CREATE
+    resource: "org.iehr.transactions.refreshPatientHealthRecords"
+    action: ALLOW      
+}
+
+rule PrescriberHRAccess {
+    description: "Allow the prescriber access to update and read the health record he created"
+    participant(P): "org.iehr.participants.Prescriber"
+    operation: UPDATE, READ
+    resource(R): "org.iehr.assets.HealthRecord"
+    condition: (P.getIdentifier() == R.doctor.getIdentifier())
+    action: ALLOW    
+}
+
+rule PatientAccess {
+    description: "Allow the patient to view and update his own record"
+    participant(P): "org.iehr.participants.Patient"
+    operation: CREATE, UPDATE, READ
+    resource(R): "org.iehr.participants.Patient"
+    condition: (P.getIdentifier() == R.getIdentifier())
+    action: ALLOW    
+}
+
+rule PatientHRRead {
+    description: "Allow the patient to enable third party to view a specific health record"
+    participant(PT): "org.iehr.participants.Patient"
+    operation: READ    
+    resource(HR): "org.iehr.assets.HealthRecord"
+    condition: (HR.getIdentifier() in PT.patientHealthRecords.getIdentifier())
+    action: ALLOW    
+}
+
+rule PatientHRAccess {
+    description: "Allow the patient to enable third party to view a specific health record"
+    participant(PT): "org.iehr.participants.Patient"
+    operation: UPDATE    
+    resource(HR): "org.iehr.assets.HealthRecord"
+    transaction(tx): "org.iehr.transactions.updateThirdPartyVisibility"
+    condition: (HR.getIdentifier() in PT.patientHealthRecords.getIdentifier())
+    action: ALLOW    
+}
+
+rule InsurerAccess {
+    description: "Allow the insurer to view and update his own record"
+    participant(P): "org.iehr.participants.Insurer"
+    operation: READ, UPDATE, CREATE
+    resource(R): "org.iehr.participants.Insurer"
+    condition: (P.getIdentifier() == R.getIdentifier())
+    action: ALLOW    
+}
+
+rule Participants {
+    description: "Grant business participants full access to user resources"
+    participant: "org.iehr.participants.*"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW  
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}

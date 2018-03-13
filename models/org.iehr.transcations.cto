@@ -1,0 +1,27 @@
+/**
+ * Transaction definitions
+ */
+
+namespace org.iehr.transactions
+
+import org.iehr.assets.*
+import org.iehr.participants.*
+
+transaction refreshPatientHealthRecords {
+  --> HealthRecord healthRecord
+  --> Patient patient
+}
+
+transaction updateThirdPartyVisibility {
+  o HealthRecord healthRecord
+  o Boolean isVisible
+}
+
+transaction updateHealthRecord {
+  o HealthRecord healthRecord
+  o Visit newVisit  
+}
+
+transaction updatePatientInfo {
+  o Patient patientInfo
+}

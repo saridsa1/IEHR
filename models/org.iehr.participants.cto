@@ -1,0 +1,58 @@
+/**
+ * New model file
+ */
+
+namespace org.iehr.participants
+
+import org.iehr.assets.HealthRecord
+
+enum Gender {
+  o MALE
+  o FEMALE
+  o OTHER
+}
+
+enum Nationality {
+  o AMERICAN
+  o BRITISH
+  o INDIAN
+  o PAKISTANI
+  o CANADIAN
+  o OTHER
+}
+
+concept Address {
+    o String street
+}
+
+abstract participant Person identified by id {
+    o String id
+    o String firstName
+    o String lastName
+    o Address address
+    o String socialSecurityNumber optional
+    o Gender gender
+    o Nationality nationality optional
+}
+
+participant Patient extends Person {
+    --> HealthRecord[] patientHealthRecords
+    --> Insurer primaryInsurer
+    o String primaryInsuranceId
+}
+
+participant Prescriber extends Person {
+    o String officeContactNumber
+    o String npi
+}
+
+abstract participant Organisation identified by Id {
+    o String Id
+    o String companyName
+    o String address
+}
+
+participant Insurer extends Organisation {
+    o String info
+}
+
